@@ -6,14 +6,33 @@ import GithubContext from '../../context/github/GithubContext'
 import { useParams } from 'react-router-dom'
 import Spinner from '../layout/Spinner'
 import RepoList from '../repos/RepoList'
+import { getUserAndRepos } from '../../context/github/GithubActions'
 
 function User() {
-    const { user, getUser, loading, repos } = useContext(GithubContext)
+    const { user, loading, repos, dispatch } = useContext(GithubContext)
 
     const params = useParams()
     useEffect(() => {
-        getUser(params.login)
+        dispatch({
+            type: 'SET_LOADING',
+            payload: {
+                loading: true
+            }
+        })
+        const gerUserData = async () => {
+            const { userData, repoData } = await getUserAndRepos(params.login)
+            dispatch({
+                type: 'GET_USER_AND_REPOS',
+                payload: {
+                    user: userData,
+                    repos: repoData
+                }
+            })
+        }
+        gerUserData()
+
     }, [])
+
 
     const {
         name,
@@ -31,7 +50,7 @@ function User() {
         public_gists,
         hireable,
 
-    } = user
+    } = user || {}
 
     if (loading) {
         return <Spinner />
@@ -161,7 +180,7 @@ function User() {
                     </div>
                 </div>
 
-                <RepoList repos={repos} />
+                {repos && <RepoList repos={repos} />}
             </div>
         </>
     )

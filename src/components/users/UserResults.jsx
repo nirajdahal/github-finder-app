@@ -11,7 +11,7 @@ function UserResults() {
 
 
 
-    if (!loading && users.length > 0) {
+    if (users && (!loading && users.length > 0)) {
         return (
             <div className='grid grid-cols-1 gap-8 xl-:grid-cols-4 lg:grid-cols-3 md:grid-cols-2'>
                 {users.map((user) => (
