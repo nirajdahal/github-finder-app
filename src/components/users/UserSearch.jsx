@@ -1,7 +1,7 @@
 
-import { clear } from '@testing-library/user-event/dist/clear'
 import { useState, useContext } from 'react'
 import GithubContext from '../../context/github/GithubContext'
+import AlertContext from '../../context/alert/AlerContext'
 
 function UserSearch() {
 
@@ -10,24 +10,27 @@ function UserSearch() {
 
     const { users, searchUsers, clearUsers } = useContext(GithubContext)
 
+    const { setAlert } = useContext(AlertContext)
+
     const handleChange = (e) => {
         console.log(e.target.value)
         setText(e.target.value)
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (text === '') {
-            alert('Please enter something')
+        if (text === '' || text.trim(" ").length <= 0) {
+            setAlert('Please enter something', 'error')
         }
         else {
             searchUsers(text)
-            setText(e.target.value)
+            setText(text)
 
         }
 
     }
     const handleClear = () => {
         clearUsers()
+        setText("")
     }
 
     return (
@@ -41,7 +44,7 @@ function UserSearch() {
                                 className='w-full pr-40 bg-gray-200 input input-lg text-black'
                                 placeholder='Search'
                                 type='text'
-                                defaultValue={text}
+                                value={text || ''}
                                 onChange={handleChange}
                             />
 
